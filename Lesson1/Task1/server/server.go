@@ -63,7 +63,6 @@ func serviceMessage() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(buf)
 			messageCh <- buf
 		}
 	}()
