@@ -21,11 +21,6 @@ func main() {
 	defer conn.Close()
 
 	go func() {
-		//data, _, err := bufio.NewReader(conn).ReadLine()
-		//if err != nil {
-		//	log.Fatal(err)
-		//}
-		//fmt.Fprint(os.Stdout, string(data))
 		io.Copy(os.Stdout, conn)
 	}()
 
@@ -38,7 +33,6 @@ func main() {
 		message := name + string(data) + "\n"
 		io.WriteString(conn, message)
 
-		//io.Copy(conn, os.Stdin) // until you send ^Z
 		fmt.Printf("%s: exit", conn.LocalAddr())
 	}
 
