@@ -2,7 +2,6 @@ openapi: 3.0.1
 info:
   title: Shop
   version: 1.0.0
-  
 components:
   schemas:
     User:
@@ -23,38 +22,50 @@ components:
           format: int64
         name:
           type: string
-        description:
+        discriptions:
           type: string
         price:
-          type: integer # чтобы не потерять точность, денежные поля мы будем передавать
-          format: int64 # в виде целочисленного значения минимальной размерности валюты (например, центы или копейки)
+          type: integer
+          format: int64
         image_link:
           type: string
-    
+    Order:
+      type: object
+      properties:
+        clientId:
+          type: integer
+          format: int64
+        items:
+          type: string
   securitySchemes:
     api_key:
       type: "apiKey"
       name: "api_key"
       in: "header"
-
-    
 paths:
   /user/login:
     post:
+      summary: user entrance
       operationId: loginUser
       parameters:
-      - name: username
+      - name: email
         in: query
         description: The user name for login
         required: true
         schema:
           type: string
+      - name: password
+        in: query
+        description: The user password for login
+        required: true
+        schema:
+          type: string
       responses:
-        "200":
+        200:
           description: successful operation
           headers:
-            X-Expires-After:
-              description: date in UTC when token expires
+            X-Expiries-After:
+              description: date in UTS when token expiries
               schema:
                 type: string
                 format: date-time
@@ -62,8 +73,8 @@ paths:
             application/json:
               schema:
                 type: string
-        "400":
-          description: Invalid username/password supplied
+        400:
+          description: invalid email/password
           content: {}
   /user/logout:
     post:
@@ -75,35 +86,34 @@ paths:
           content: {}
   /items:
     post:
-      summary: "Add a new item to the store"
-      operationId: "CreateItem"
-      description: "Item object that needs to be added to the store"
+      summary: add new item to the store
+      operationId: create item
+      description: new item object for adding to the store
       requestBody:
         required: true
         content:
-          "application/json":
+          application/json:
             schema:
               $ref: '#/components/schemas/Item'
-
       responses:
-        "405":
-          description: "Invalid input"
+        405:
+          description: invalid input
       security:
       - api_key: []
     get:
-      summary: Lists Items with filters
-      operationId: ListItems
+      summary: get item list from store
+      operationId: listItems
       parameters:
       - name: price_min
         in: query
-        description: Lower price limit
+        description: lower price
         required: false
         schema:
           type: integer
           format: int64
       - name: price_max
         in: query
-        description: Upper price limit
+        description: max price
         required: false
         schema:
           type: integer
@@ -114,18 +124,17 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Item'
+               type: array
+               items:
+                $ref: '#/components/schemas/Item'
         400:
-          description: Invalid price range
+          description: invalid request
           content: {}
-      
   /items/upload_image:
     post:
-      summary: "uploads an image"
-      operationId: "uploadFile"
-      description: "Additional data to pass to server"
+      summary: upload image to represent item
+      operationId: uploadFile
+      description: Additional data to pass to server
       requestBody:
         required: true
         content:
@@ -136,24 +145,22 @@ paths:
                 additionalMetadata:
                   type: string
                 fileName:
-                  description: "file to upload"
+                  description: file to upload
                   type: string
                   format: binary
-                  
       responses:
         201:
-          description: "file uploaded"
+          description: file successful upload
       security:
       - api_key: []
-
   /items/{itemId}:
     get:
-      summary: Find item by ID
-      operationId: GetItem
+      summary: getting item by itemId
+      operationId: getItem
       parameters:
       - name: itemId
         in: path
-        description: ID of item to return
+        description: id of item to return
         required: true
         schema:
           type: integer
@@ -166,15 +173,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Item'
         400:
-          description: Invalid ID supplied
+          description: invalid item id
           content: {}
     put:
       summary: Updates a item in the store with form data
-      operationId: UpdateItem
+      operationId: updateItem
       parameters:
       - name: itemId
         in: path
-        description: ID of item that needs to be updated
+        description: ID of the item that needs to be updated
         required: true
         schema:
           type: integer
@@ -192,29 +199,71 @@ paths:
                   description: Updated status of the item
       responses:
         405:
-          description: Invalid input
+          description: invalid input
           content: {}
       security:
       - api_key: []
     delete:
-      summary: Deletes a item
+      summary: delete item by id
       operationId: DeleteItem
       parameters:
       - name: itemId
         in: path
-        description: Item id to delete
+        description: item to delete
         required: true
         schema:
           type: integer
           format: int64
       responses:
         400:
-          description: Invalid ID supplied
+          description: invalid item id
           content: {}
         404:
-          description: Item not found
+          description: item not found
           content: {}
       security:
       - api_key: []
+  /order/buy:
+    post:
+      summary: buy items in the cart
+      operationId: buy items
+      description: buy all items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        405:
+          description: invalid input
+      security:
+      - api_key: []
+      
+      
+  
+        
+        
+        
+        
+        
+        
+        
+        
+              
+    
+      
+  
+  
+        
 
-
+          
+      
+      
+          
+          
+          
+          
+          
+          
+          
